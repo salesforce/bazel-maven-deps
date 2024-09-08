@@ -1,0 +1,62 @@
+load("@contrib_rules_jvm//java:defs.bzl", "java_test_suite")
+
+package(default_visibility = ["//visibility:private"])
+
+java_library(
+    name = "maven-deps-cli-framework",
+    srcs = glob([
+        "src/main/java/**/*.java",
+    ]),
+    visibility = ["//visibility:public"],
+    exports = [
+        "@info_picocli_picocli",
+        "@org_slf4j_slf4j_api",
+    ],
+    deps = [
+        "@com_google_guava_guava",
+        "@info_picocli_picocli",
+        "@me_tongfei_progressbar",
+        "@org_fusesource_jansi_jansi",
+        "@org_slf4j_slf4j_api",
+    ],
+)
+
+java_library(
+    name = "slf4j_logger",
+    srcs = glob([
+        "src/slf4j/java/**/*.java",
+    ]),
+    resources = glob(
+        ["src/slf4j/resources/**"],
+    ),
+    visibility = ["//visibility:public"],
+    deps = [
+        ":maven-deps-cli-framework",
+        "@org_slf4j_slf4j_api",
+    ],
+)
+
+java_test_suite(
+    name = "testsuite",
+    size = "small",
+    srcs = glob([
+        "src/test/java/**/*.java",
+    ]),
+    data = glob(["src/test/it/**"]),
+    resources = glob(["src/test/resources/**"]),
+    runner = "junit5",
+    runtime_deps = [
+        "@org_junit_jupiter_junit_jupiter_engine",
+        "@org_junit_platform_junit_platform_launcher",
+        "@org_junit_platform_junit_platform_reporting",
+    ],
+    deps = [
+        ":maven-deps-cli-framework",
+        "@org_hamcrest_hamcrest",
+        "@org_junit_jupiter_junit_jupiter_api",
+        "@org_junit_jupiter_junit_jupiter_params",
+        "@org_junit_platform_junit_platform_commons",
+        "@org_mockito_mockito_core",
+        "@org_mockito_mockito_junit_jupiter",
+    ],
+)

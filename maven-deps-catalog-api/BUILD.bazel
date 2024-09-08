@@ -1,0 +1,40 @@
+load("@contrib_rules_jvm//java:defs.bzl", "java_test_suite")
+
+package(default_visibility = ["//visibility:private"])
+
+java_library(
+    name = "maven-deps-catalog-api",
+    srcs = glob([
+        "src/main/java/**/*.java",
+    ]),
+    resources = glob(["src/main/resources/**"]),
+    visibility = ["//visibility:public"],
+    deps = [
+        "//maven-deps-cli-framework",
+        "//starlark",
+        "@com_google_guava_guava",
+    ],
+)
+
+java_test_suite(
+    name = "testsuite",
+    size = "small",
+    srcs = glob([
+        "src/test/java/**/*.java",
+    ]),
+    resources = glob(["src/test/resources/**"]),
+    runner = "junit5",
+    runtime_deps = [
+        "@org_junit_jupiter_junit_jupiter_engine",
+        "@org_junit_platform_junit_platform_launcher",
+        "@org_junit_platform_junit_platform_reporting",
+    ],
+    deps = [
+        ":maven-deps-catalog-api",
+        "//maven-deps-cli-framework",
+        "//starlark",
+        "@org_hamcrest_hamcrest",
+        "@org_junit_jupiter_junit_jupiter_api",
+        "@org_junit_platform_junit_platform_commons",
+    ],
+)

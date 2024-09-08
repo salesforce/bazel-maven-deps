@@ -1,0 +1,73 @@
+load("@contrib_rules_jvm//java:defs.bzl", "java_test_suite")
+
+package(default_visibility = ["//visibility:private"])
+
+java_library(
+    name = "starlark",
+    srcs = glob([
+        "src/main/java/**/*.java",
+    ]),
+    resources = glob(["src/main/resources/**"]),
+    visibility = ["//visibility:public"],
+    exports = [
+        ":net_starlark_import",
+    ],
+    deps = [
+        ":net_starlark_import",
+        "@com_google_code_findbugs_jsr305",
+        "@com_google_errorprone_error_prone_annotations",
+        "@com_google_flogger_flogger",
+        "@com_google_flogger_google_extensions",
+        "@com_google_guava_guava",
+    ],
+)
+
+java_library(
+    name = "net_starlark_import",
+    srcs = glob([
+        "src/starlark/java/**/*.java",
+    ]),
+    javacopts = ["-nowarn"],
+    plugins = [
+        ":auto_annotation_plugin",
+    ],
+    runtime_deps = [
+        "@com_google_flogger_flogger_slf4j_backend",
+    ],
+    deps = [
+        "@com_google_auto_value_auto_value_annotations",
+        "@com_google_code_findbugs_jsr305",
+        "@com_google_errorprone_error_prone_annotations",
+        "@com_google_flogger_flogger",
+        "@com_google_flogger_google_extensions",
+        "@com_google_guava_guava",
+    ],
+)
+
+java_plugin(
+    name = "auto_annotation_plugin",
+    processor_class = "com.google.auto.value.processor.AutoValueProcessor",
+    visibility = ["//visibility:public"],
+    deps = [
+        "@com_google_auto_value_auto_value",
+    ],
+)
+
+java_test_suite(
+    name = "testsuite",
+    size = "small",
+    srcs = glob([
+        "src/test/java/**/*.java",
+    ]),
+    resources = glob(["src/test/resources/**"]),
+    runner = "junit5",
+    runtime_deps = [
+        "@org_junit_jupiter_junit_jupiter_engine",
+        "@org_junit_platform_junit_platform_launcher",
+        "@org_junit_platform_junit_platform_reporting",
+    ],
+    deps = [
+        ":starlark",
+        "@org_junit_jupiter_junit_jupiter_api",
+    ],
+)

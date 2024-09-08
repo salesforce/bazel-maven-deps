@@ -1,0 +1,114 @@
+load("@contrib_rules_jvm//java:defs.bzl", "java_test_suite")
+
+package(default_visibility = ["//visibility:private"])
+
+java_library(
+    name = "maven-deps-tool",
+    srcs = glob([
+        "src/main/java/**/*.java",
+    ]),
+    visibility = ["//visibility:public"],
+    exports = [
+        "//maven-deps-catalog-api",
+        "//starlark",
+        "@com_google_guava_guava",
+    ],
+    deps = [
+        ":bazel_vendored_code",
+        "//maven-deps-catalog-api",
+        "//maven-deps-cli-framework",
+        "//starlark",
+        "@bazel_maven_deps__org_apache_maven_maven_artifact",
+        "@bazel_maven_deps__org_apache_maven_maven_builder_support",
+        "@bazel_maven_deps__org_apache_maven_maven_core",
+        "@bazel_maven_deps__org_apache_maven_maven_model",
+        "@bazel_maven_deps__org_apache_maven_maven_model_builder",
+        "@bazel_maven_deps__org_apache_maven_maven_plugin_api",
+        "@bazel_maven_deps__org_apache_maven_maven_resolver_provider",
+        "@bazel_maven_deps__org_apache_maven_maven_settings",
+        "@bazel_maven_deps__org_apache_maven_maven_settings_builder",
+        "@bazel_maven_deps__org_apache_maven_plugin_tools_maven_plugin_annotations",
+        "@bazel_maven_deps__org_apache_maven_resolver_maven_resolver_api",
+        "@bazel_maven_deps__org_apache_maven_resolver_maven_resolver_connector_basic",
+        "@bazel_maven_deps__org_apache_maven_resolver_maven_resolver_impl",
+        "@bazel_maven_deps__org_apache_maven_resolver_maven_resolver_named_locks",
+        "@bazel_maven_deps__org_apache_maven_resolver_maven_resolver_spi",
+        "@bazel_maven_deps__org_apache_maven_resolver_maven_resolver_supplier",
+        "@bazel_maven_deps__org_apache_maven_resolver_maven_resolver_transport_classpath",
+        "@bazel_maven_deps__org_apache_maven_resolver_maven_resolver_transport_file",
+        "@bazel_maven_deps__org_apache_maven_resolver_maven_resolver_transport_http",
+        "@bazel_maven_deps__org_apache_maven_resolver_maven_resolver_util",
+        "@bazel_maven_deps__org_codehaus_plexus_plexus_cipher",
+        "@bazel_maven_deps__org_codehaus_plexus_plexus_classworlds",
+        "@bazel_maven_deps__org_codehaus_plexus_plexus_component_annotations",
+        "@bazel_maven_deps__org_codehaus_plexus_plexus_interpolation",
+        "@bazel_maven_deps__org_codehaus_plexus_plexus_sec_dispatcher",
+        "@bazel_maven_deps__org_codehaus_plexus_plexus_utils",
+        "@com_google_guava_guava",
+        "@info_picocli_picocli",
+        "@me_tongfei_progressbar",
+        "@org_apache_commons_commons_lang3",
+        "@org_apache_commons_commons_text",
+        "@org_eclipse_sisu_org_eclipse_sisu_plexus",
+        "@org_fusesource_jansi_jansi",
+        "@org_slf4j_slf4j_api",
+    ],
+)
+
+java_library(
+    name = "bazel_vendored_code",
+    srcs = glob([
+        "src/bazel/java/**/*.java",
+    ]),
+    plugins = [
+        ":auto_annotation_plugin",
+    ],
+    exports = [
+        "@com_google_auth_google_auth_library_credentials",
+    ],
+    deps = [
+        "//starlark",
+        "@com_google_auth_google_auth_library_credentials",
+        "@com_google_auto_value_auto_value_annotations",
+        "@com_google_code_findbugs_jsr305",
+        "@com_google_errorprone_error_prone_annotations",
+        "@com_google_guava_guava",
+        "@org_slf4j_slf4j_api",
+    ],
+)
+
+java_plugin(
+    name = "auto_annotation_plugin",
+    processor_class = "com.google.auto.value.processor.AutoValueProcessor",
+    deps = [
+        "@com_google_auto_value_auto_value",
+    ],
+)
+
+java_test_suite(
+    name = "testsuite",
+    size = "small",
+    srcs = glob([
+        "src/test/java/**/*.java",
+    ]),
+    data = glob(["src/test/it/**"]),
+    resources = glob(["src/test/resources/**"]),
+    runner = "junit5",
+    runtime_deps = [
+        "@org_junit_jupiter_junit_jupiter_engine",
+        "@org_junit_platform_junit_platform_launcher",
+        "@org_junit_platform_junit_platform_reporting",
+    ],
+    deps = [
+        ":maven-deps-tool",
+        "//maven-deps-catalog-api",
+        "//maven-deps-cli-framework",
+        "//starlark",
+        "@org_hamcrest_hamcrest",
+        "@org_junit_jupiter_junit_jupiter_api",
+        "@org_junit_jupiter_junit_jupiter_params",
+        "@org_junit_platform_junit_platform_commons",
+        "@org_mockito_mockito_core",
+        "@org_mockito_mockito_junit_jupiter",
+    ],
+)
